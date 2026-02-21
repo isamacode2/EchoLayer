@@ -34,6 +34,7 @@ let dc;
 let localStream;
 let audioElement = document.createElement("audio");
 audioElement.autoplay = true;
+document.body.appendChild(audioElement);
 
 document.getElementById("connectBtn").onclick = async () => {
     if (!pc) {
