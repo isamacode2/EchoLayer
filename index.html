@@ -55,6 +55,7 @@ document.getElementById("triggerBtn").onclick = () => {
 };
 
 async function connect() {
+    alert("Connect triggered");
     pc = new RTCPeerConnection();
 
     dc = pc.createDataChannel("oai-events");
