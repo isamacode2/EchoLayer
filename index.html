@@ -34,7 +34,7 @@ let dc;
 let localStream;
 let audioElement = document.createElement("audio");
 audioElement.autoplay = true;
-audioElement.playsInline = true; // important for iOS
+audioElement.playsInline = true;
 
 document.getElementById("connectBtn").onclick = async () => {
     if (!pc) {
@@ -49,7 +49,7 @@ document.getElementById("triggerBtn").onclick = () => {
         dc.send(JSON.stringify({
             type: "response.create",
             response: {
-                instructions: "Provide short tactical intelligence."
+                instructions: "Provide short tactical intelligence in English only."
             }
         }));
     }
@@ -57,12 +57,11 @@ document.getElementById("triggerBtn").onclick = () => {
 
 async function connect() {
     try {
-        // Attach audio element to DOM (required for iOS Safari)
+
         if (!audioElement.parentNode) {
             document.body.appendChild(audioElement);
         }
 
-        // Proper ICE configuration (prevents Safari offer hang)
         pc = new RTCPeerConnection({
             iceServers: [
                 { urls: "stun:stun.l.google.com:19302" }
@@ -72,39 +71,44 @@ async function connect() {
         dc = pc.createDataChannel("oai-events");
 
         dc.onopen = () => {
-            console.log("Data channel open");
             document.getElementById("triggerBtn").disabled = false;
 
-            // Force English responses
             dc.send(JSON.stringify({
                 type: "session.update",
                 session: {
-                    instructions: "You are a professional tactical assistant. Always respond in English only.",
+                    instructions: `
+You are a professional tactical intelligence assistant.
+
+STRICT RULES:
+1. You MUST respond ONLY in English.
+2. You MUST NEVER respond in Spanish.
+3. If input is not English, translate internally and respond in English.
+4. Do NOT mention language rules.
+5. You do NOT have internet browsing capability.
+6. Only use information from this session.
+`,
                     input_audio_transcription: {
-                        language: "en-GB"
+                        model: "gpt-4o-transcribe",
+                        language: "en"
                     }
                 }
             }));
         };
 
         pc.ontrack = (event) => {
-            console.log("Remote track received");
             audioElement.srcObject = event.streams[0];
             audioElement.play().catch(() => {});
         };
 
-        // Get microphone
         localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
         localStream.getTracks().forEach(track => {
             pc.addTrack(track, localStream);
         });
 
-        // Create offer
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
 
-        // Wait for ICE gathering to complete (important for mobile)
         await new Promise(resolve => {
             if (pc.iceGatheringState === "complete") {
                 resolve();
@@ -119,7 +123,6 @@ async function connect() {
             }
         });
 
-        // Send SDP to backend
         const response = await fetch("/realtime", {
             method: "POST",
             headers: {
@@ -140,10 +143,8 @@ async function connect() {
         });
 
         document.getElementById("connectBtn").innerText = "Disconnect";
-        console.log("Connected successfully");
 
     } catch (err) {
-        console.error(err);
         alert("Connection failed: " + err.message);
         disconnect();
     }
