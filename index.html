@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Whisper Intel</title>
+<title>Whisper Intel – Interview Assist</title>
 <style>
 body {
     font-family: -apple-system, sans-serif;
@@ -23,10 +23,10 @@ button {
 </head>
 <body>
 
-<h1>Whisper Intel</h1>
+<h1>Interview Assist Mode</h1>
 
 <button id="connectBtn" class="connect">Connect</button>
-<button id="triggerBtn" class="trigger" disabled>Think</button>
+<button id="triggerBtn" class="trigger" disabled>Assist</button>
 
 <script>
 let pc;
@@ -36,7 +36,10 @@ let audioElement = document.createElement("audio");
 audioElement.autoplay = true;
 audioElement.playsInline = true;
 
-document.getElementById("connectBtn").onclick = async () => {
+const connectBtn = document.getElementById("connectBtn");
+const triggerBtn = document.getElementById("triggerBtn");
+
+connectBtn.onclick = async () => {
     if (!pc) {
         await connect();
     } else {
@@ -44,12 +47,43 @@ document.getElementById("connectBtn").onclick = async () => {
     }
 };
 
-document.getElementById("triggerBtn").onclick = () => {
+triggerBtn.onclick = () => {
     if (dc && dc.readyState === "open") {
         dc.send(JSON.stringify({
             type: "response.create",
             response: {
-                instructions: "Provide short tactical intelligence in English only."
+                instructions: `
+You are operating in Interview Assist Mode.
+
+STEP 1 — Identify question type:
+- Behavioural
+- Technical
+- Strategic
+- Problem-solving
+
+If Behavioural:
+Use concise STAR format:
+- Situation (1 sentence)
+- Task (1 sentence)
+- Action (max 2 sentences)
+- Result (1 measurable outcome)
+
+If Technical:
+- Direct answer first
+- Short explanation
+- One practical example
+
+Rules:
+- Maximum 5 sentences total
+- No filler words
+- Confident tone
+- English only
+
+End with:
+
+LEADERSHIP EDGE:
+[One strong sentence elevating ownership, initiative, or impact]
+`
             }
         }));
     }
@@ -71,21 +105,24 @@ async function connect() {
         dc = pc.createDataChannel("oai-events");
 
         dc.onopen = () => {
-            document.getElementById("triggerBtn").disabled = false;
+            triggerBtn.disabled = false;
 
             dc.send(JSON.stringify({
                 type: "session.update",
                 session: {
                     instructions: `
-You are a professional tactical intelligence assistant.
+You are a covert real-time Interview Assistant.
 
-STRICT RULES:
-1. You MUST respond ONLY in English.
-2. You MUST NEVER respond in Spanish.
-3. If input is not English, translate internally and respond in English.
-4. Do NOT mention language rules.
-5. You do NOT have internet browsing capability.
-6. Only use information from this session.
+Your mission is to enhance response quality instantly.
+
+GLOBAL RULES:
+1. Always respond in English.
+2. Never switch languages.
+3. Keep answers concise.
+4. Structure behavioural answers using STAR.
+5. Frame responses with leadership and ownership.
+6. No disclaimers.
+7. No unnecessary elaboration.
 `,
                     input_audio_transcription: {
                         model: "gpt-4o-transcribe",
@@ -93,6 +130,10 @@ STRICT RULES:
                     }
                 }
             }));
+        };
+
+        dc.onmessage = (event) => {
+            console.log("Realtime event:", event.data);
         };
 
         pc.ontrack = (event) => {
@@ -142,7 +183,7 @@ STRICT RULES:
             sdp: answerSDP
         });
 
-        document.getElementById("connectBtn").innerText = "Disconnect";
+        connectBtn.innerText = "Disconnect";
 
     } catch (err) {
         alert("Connection failed: " + err.message);
@@ -156,8 +197,8 @@ function disconnect() {
     } catch {}
 
     pc = null;
-    document.getElementById("triggerBtn").disabled = true;
-    document.getElementById("connectBtn").innerText = "Connect";
+    triggerBtn.disabled = true;
+    connectBtn.innerText = "Connect";
 }
 </script>
 
