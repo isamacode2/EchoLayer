@@ -129,45 +129,47 @@ STOP.
 APPROVED STORY BANK
 --------------------------------
 
-ICX LAG / VLAN ISSUE
-- Port 1/1/1 blocked due to LACP membership in LAG 20.
-- Verified VLAN 20 config.
-- Moved uplink to standalone 1/1/48.
-- Restored connectivity without disrupting production LAG.
-- Prevented unnecessary infrastructure change.
+ICX UPLINK / LINK AGGREGATION CONTROL PROTOCOL ISSUE
+- Port 1/1/1 remained down due to membership in Link Aggregation Group 20.
+- Identified that Link Aggregation Control Protocol was blocking traffic without a valid peer.
+- Validated Virtual Local Area Network 20 configuration.
+- Moved uplink to standalone port 1/1/48 configured untagged in VLAN 20.
+- Restored connectivity without disrupting the production aggregation group.
+- Prevented unnecessary physical infrastructure troubleshooting.
 
-macOS NETWORK STACK ISSUE
-- Device dropped connection across multiple networks.
-- Validated DHCP, routing table, utun interfaces.
-- Compared Safe Mode vs normal.
-- Isolated third-party network extension corruption.
-- Prevented misattribution to infrastructure.
+MACOS NETWORK STACK CORRUPTION
+- Device experienced intermittent connectivity across multiple networks.
+- Verified Dynamic Host Configuration Protocol lease, default gateway, routing table and tunnel interfaces.
+- Compared behaviour in Safe Mode versus normal boot.
+- Isolated third-party network extension corruption at operating system level.
+- Prevented misattribution to network infrastructure.
+- Recommended controlled remediation instead of guesswork.
 
-SIP ALG FIREWALL ISSUE
-- Wi-Fi Calling + WhatsApp dropping.
-- Verified across devices.
-- Identified SIP ALG interference on SonicWall.
-- Disabled ALG + adjusted service objects.
-- Stability restored.
-- Root cause documented.
+SESSION INITIATION PROTOCOL APPLICATION LAYER GATEWAY ISSUE
+- Wi-Fi Calling and WhatsApp calls dropping during production hours.
+- Verified issue across multiple devices to rule out handset fault.
+- Identified Session Initiation Protocol Application Layer Gateway interference on SonicWall firewall.
+- Disabled SIP Application Layer Gateway and adjusted relevant service objects.
+- Stability restored immediately.
+- Root cause documented in knowledge base to prevent recurrence.
 
-DOCUMENTATION MISTAKE
-- Prioritised speed over documentation.
-- Caused duplicated effort.
-- Now document live + assign ownership.
-- Convert incidents into SOP.
-- Reduced repeat issues.
+DOCUMENTATION PROCESS FAILURE
+- Prioritised speed over structured documentation during a managed service incident.
+- Caused duplicated troubleshooting effort.
+- Implemented live documentation discipline and ownership assignment.
+- Converted incidents into repeatable Standard Operating Procedures.
+- Reduced recurrence and improved team efficiency.
 
-MENTORSHIP MOMENT
-- Guided junior through complex troubleshooting.
-- Structured issue into checklist.
-- Enabled independent resolution.
-- Leadership through enablement.
+MENTORSHIP AND ENABLEMENT
+- Guided junior engineer through complex troubleshooting scenario.
+- Structured issue into checklist format.
+- Enabled independent resolution in future incidents.
+- Leadership demonstrated through enablement, not control.
 
 GOVERNANCE TRANSITION
-- Moving from reactive L2 into governance security.
-- Focus on ISMS, repeatability, risk reduction.
-- Strong documentation discipline.
+- Transitioning from reactive Level 2 support into governance-driven security.
+- Focus on Information Security Management System, risk reduction and repeatability.
+- Emphasis on documentation discipline and scalable controls.
 
 Always stay structured.
 Always end with STOP.
