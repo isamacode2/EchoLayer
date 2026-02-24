@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Whisper Intel – Interview Assist</title>
+<title>Interview Weapon</title>
+
 <style>
 body {
     font-family: -apple-system, sans-serif;
@@ -17,18 +18,18 @@ button {
     border: none;
 }
 .connect { background: #2ecc71; color: white; }
-.disconnect { background: #e74c3c; color: white; }
 .trigger { background: #3498db; color: white; }
 </style>
 </head>
 <body>
 
-<h1>Interview Assist Mode</h1>
+<h1>Interview Weapon</h1>
 
 <button id="connectBtn" class="connect">Connect</button>
 <button id="triggerBtn" class="trigger" disabled>Assist</button>
 
 <script>
+
 let pc;
 let dc;
 let localStream;
@@ -36,10 +37,7 @@ let audioElement = document.createElement("audio");
 audioElement.autoplay = true;
 audioElement.playsInline = true;
 
-const connectBtn = document.getElementById("connectBtn");
-const triggerBtn = document.getElementById("triggerBtn");
-
-connectBtn.onclick = async () => {
+document.getElementById("connectBtn").onclick = async () => {
     if (!pc) {
         await connect();
     } else {
@@ -47,43 +45,12 @@ connectBtn.onclick = async () => {
     }
 };
 
-triggerBtn.onclick = () => {
+document.getElementById("triggerBtn").onclick = () => {
     if (dc && dc.readyState === "open") {
         dc.send(JSON.stringify({
             type: "response.create",
             response: {
-                instructions: `
-You are operating in Interview Assist Mode.
-
-STEP 1 — Identify question type:
-- Behavioural
-- Technical
-- Strategic
-- Problem-solving
-
-If Behavioural:
-Use concise STAR format:
-- Situation (1 sentence)
-- Task (1 sentence)
-- Action (max 2 sentences)
-- Result (1 measurable outcome)
-
-If Technical:
-- Direct answer first
-- Short explanation
-- One practical example
-
-Rules:
-- Maximum 5 sentences total
-- No filler words
-- Confident tone
-- English only
-
-End with:
-
-LEADERSHIP EDGE:
-[One strong sentence elevating ownership, initiative, or impact]
-`
+                instructions: "Assist using strict Interview Weapon structure."
             }
         }));
     }
@@ -105,35 +72,109 @@ async function connect() {
         dc = pc.createDataChannel("oai-events");
 
         dc.onopen = () => {
-            triggerBtn.disabled = false;
+
+            document.getElementById("triggerBtn").disabled = false;
 
             dc.send(JSON.stringify({
                 type: "session.update",
                 session: {
                     instructions: `
-You are a covert real-time Interview Assistant.
+You are "Interview Weapon Mode".
 
-Your mission is to enhance response quality instantly.
+PRIMARY OBJECTIVE:
+Discipline the user’s thinking in live interviews.
 
-GLOBAL RULES:
-1. Always respond in English.
-2. Never switch languages.
-3. Keep answers concise.
-4. Structure behavioural answers using STAR.
-5. Frame responses with leadership and ownership.
-6. No disclaimers.
-7. No unnecessary elaboration.
-`,
-                    input_audio_transcription: {
-                        model: "gpt-4o-transcribe",
-                        language: "en"
-                    }
+STRICT GLOBAL RULES:
+- Respond ONLY in English.
+- NEVER fabricate experience.
+- ONLY use approved story bank.
+- NEVER produce paragraphs.
+- No filler.
+- No motivational talk.
+- Be concise.
+- Always end with the word STOP.
+
+--------------------------------
+OUTPUT STRUCTURE (MANDATORY)
+--------------------------------
+For behavioural questions:
+1. One-line anchor.
+2. Three compressed bullets.
+3. One leadership framing line.
+4. One metric/impact reminder.
+5. STOP.
+
+For technical questions:
+- Root cause.
+- Validation steps.
+- Fix.
+- Risk if ignored.
+- STOP.
+
+For executive questions:
+- Decision first.
+- Risk exposure.
+- Business impact.
+- Recommended action.
+- STOP.
+
+If user sounds anxious:
+Output exactly:
+Pause.
+Answer in one sentence.
+Then 3 bullets.
+STOP.
+
+--------------------------------
+APPROVED STORY BANK
+--------------------------------
+
+ICX LAG / VLAN ISSUE
+- Port 1/1/1 blocked due to LACP membership in LAG 20.
+- Verified VLAN 20 config.
+- Moved uplink to standalone 1/1/48.
+- Restored connectivity without disrupting production LAG.
+- Prevented unnecessary infrastructure change.
+
+macOS NETWORK STACK ISSUE
+- Device dropped connection across multiple networks.
+- Validated DHCP, routing table, utun interfaces.
+- Compared Safe Mode vs normal.
+- Isolated third-party network extension corruption.
+- Prevented misattribution to infrastructure.
+
+SIP ALG FIREWALL ISSUE
+- Wi-Fi Calling + WhatsApp dropping.
+- Verified across devices.
+- Identified SIP ALG interference on SonicWall.
+- Disabled ALG + adjusted service objects.
+- Stability restored.
+- Root cause documented.
+
+DOCUMENTATION MISTAKE
+- Prioritised speed over documentation.
+- Caused duplicated effort.
+- Now document live + assign ownership.
+- Convert incidents into SOP.
+- Reduced repeat issues.
+
+MENTORSHIP MOMENT
+- Guided junior through complex troubleshooting.
+- Structured issue into checklist.
+- Enabled independent resolution.
+- Leadership through enablement.
+
+GOVERNANCE TRANSITION
+- Moving from reactive L2 into governance security.
+- Focus on ISMS, repeatability, risk reduction.
+- Strong documentation discipline.
+
+Always stay structured.
+Always end with STOP.
+`
                 }
             }));
-        };
 
-        dc.onmessage = (event) => {
-            console.log("Realtime event:", event.data);
         };
 
         pc.ontrack = (event) => {
@@ -183,7 +224,7 @@ GLOBAL RULES:
             sdp: answerSDP
         });
 
-        connectBtn.innerText = "Disconnect";
+        document.getElementById("connectBtn").innerText = "Disconnect";
 
     } catch (err) {
         alert("Connection failed: " + err.message);
@@ -197,9 +238,10 @@ function disconnect() {
     } catch {}
 
     pc = null;
-    triggerBtn.disabled = true;
-    connectBtn.innerText = "Connect";
+    document.getElementById("triggerBtn").disabled = true;
+    document.getElementById("connectBtn").innerText = "Connect";
 }
+
 </script>
 
 </body>
